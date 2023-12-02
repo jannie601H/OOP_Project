@@ -31,7 +31,7 @@ public class AimLabGame extends JFrame {
             }
         });
 
-        timer = new Timer(1000, new ActionListener() {
+        timer = new Timer(50, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateGame();
@@ -99,7 +99,7 @@ public class AimLabGame extends JFrame {
         }
 
         public void shrink() {
-            radius -= 5; // 크기를 감소시킴
+            radius -= 1; // 크기를 감소시킴
         }
 
         public boolean contains(int px, int py) {
