@@ -13,15 +13,28 @@ public class AimLabGame extends JFrame {
     private static final int CIRCLE_RADIUS = 30;
     	
     private int lives = 3;
+    private int score = 0;
     private Timer timer;
     private Random random = new Random();
     private Circle targetCircle;
-
+    private JLabel scoreLabel = new JLabel(Integer.toString(score));
+    private JLabel livesLabel = new JLabel(Integer.toString(lives));
+    
     public AimLabGame() {
         setTitle("Aim Lab Game");
         setSize(WIDTH, HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        setLayout(null);
+        
+        scoreLabel.setSize(100, 200);
+        scoreLabel.setLocation(760, 450);
+        add(scoreLabel);
+        
+        livesLabel.setSize(100, 200);
+        livesLabel.setLocation(730, 450);
+        add(livesLabel);
+        
+        
         initGame();
 
         addMouseListener(new MouseAdapter() {
@@ -48,11 +61,11 @@ public class AimLabGame extends JFrame {
 
     private void updateGame() {
         targetCircle.shrink(); // 원의 크기를 감소시킴
-
+        
         if (targetCircle.getRadius() <= 0) {
             targetCircle = generateRandomCircle(); // 새로운 원 생성
-            lives--;
-
+            lives--; // 목숨 업데이트
+            livesLabel.setText(Integer.toString(lives));
             if (lives == 0) {
                 gameOver();
             }
@@ -62,6 +75,8 @@ public class AimLabGame extends JFrame {
     private void checkHit(int x, int y) {
         if (targetCircle.contains(x, y)) {
             targetCircle = generateRandomCircle(); // 새로운 원 생성
+            score += 1; // 점수 업데이트
+            scoreLabel.setText(Integer.toString(score));
         }
     }
 
@@ -110,6 +125,8 @@ public class AimLabGame extends JFrame {
             g.setColor(Color.BLUE);
             g.fillOval(x - radius, y - radius, radius * 2, radius * 2);
         }
+        
+        
     }
 
     public static void main(String[] args) {
