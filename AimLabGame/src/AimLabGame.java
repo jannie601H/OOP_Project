@@ -19,7 +19,8 @@ public class AimLabGame extends JFrame {
     private Circle targetCircle;
     private JLabel scoreLabel = new JLabel(Integer.toString(score));
     private JLabel livesLabel = new JLabel(Integer.toString(lives));
-    
+    private Partition partition = new Partition(700, 0, 700, 600); // 세로선 좌표
+   
     public AimLabGame() {
         setTitle("Aim Lab Game");
         setSize(WIDTH, HEIGHT);
@@ -27,12 +28,15 @@ public class AimLabGame extends JFrame {
         setLayout(null);
         
         scoreLabel.setSize(100, 200);
-        scoreLabel.setLocation(760, 450);
+        scoreLabel.setLocation(750, 450);
         add(scoreLabel);
         
         livesLabel.setSize(100, 200);
         livesLabel.setLocation(730, 450);
         add(livesLabel);
+        
+      
+        
         
         
         initGame();
@@ -90,13 +94,15 @@ public class AimLabGame extends JFrame {
     public void paint(Graphics g) {
         super.paint(g);
         targetCircle.draw(g);
+        partition.draw(g);
     }
 
     private Circle generateRandomCircle() {
-        int x = random.nextInt(WIDTH - CIRCLE_RADIUS * 2) + CIRCLE_RADIUS;
+        int x = random.nextInt(WIDTH - 100 - CIRCLE_RADIUS * 2) + CIRCLE_RADIUS; // adjust 50
         int y = random.nextInt(HEIGHT - CIRCLE_RADIUS * 2) + CIRCLE_RADIUS;
         return new Circle(x, y, CIRCLE_RADIUS);
     }
+    
 
     private class Circle {
         private int x;
@@ -126,8 +132,27 @@ public class AimLabGame extends JFrame {
             g.fillOval(x - radius, y - radius, radius * 2, radius * 2);
         }
         
-        
     }
+    
+    private class Partition {
+    	private int x1;
+    	private int y1;
+    	private int x2;
+    	private int y2;
+    	
+    	public Partition(int x1, int y1, int x2, int y2) {
+    		this.x1 = x1;
+    		this.y1 = y1;
+    		this.x2 = x2;
+    		this.y2 = y2;
+    	}
+    	
+    	public void draw(Graphics g) {
+    		g.setColor(Color.BLACK);
+    		g.drawLine(x1, y1, x2, y2);
+    	}
+    }
+    
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
