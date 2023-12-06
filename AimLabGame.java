@@ -28,18 +28,20 @@ public class AimLabGame extends JFrame {
     private JLabel livesLabel = new JLabel("life: "+Integer.toString(lives));
     private Partition partition = new Partition(WIDTH - 100, 0, WIDTH - 100, HEIGHT); // 세로선 좌표
     // 점수, 목숨을 출력할 JLabel 정의 및 게임화면 분할 Partition 직선 정의
-
+    private MyPanel panel = new MyPanel();
+    
     public AimLabGame() {
         setTitle("Aim Lab Game");
         setSize(WIDTH, HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //게임 창의 제목 및 크기 지정과 창 종료 설정
         setLayout(null);
-
-        //게임 시작 버튼 생성 
+        //게임 시작 버튼 생성
         JButton startButton = new JButton("Game Start");
         startButton.setBounds((WIDTH - BUTTON_WIDTH) / 2, (HEIGHT - BUTTON_HEIGHT) / 2, BUTTON_WIDTH, BUTTON_HEIGHT);
         //버튼의 위치를 중앙정렬
+        setContentPane(panel);
+        
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -47,18 +49,62 @@ public class AimLabGame extends JFrame {
                 //startGame 메서드를 호출하여 게임을 시작한다.
             }
         });
-
+        
         // 레이아웃 매니저를 사용하지 않음
         setLayout(null);
         add(startButton);
         //버튼 표시
     }
 
+    class MyPanel extends JPanel{
+        private static final long serialVersionUID = 1L;
+        
+    	private ImageIcon icon; 
+    	private ImageIcon screen;
+    	public MyPanel() {
+    		loadImageIcon();
+    	}
+    	public void loadImageIcon() {
+    		if(score == 15) {
+    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\다운로드 (2).jpeg");
+    			//골드
+    		}else if(score == 25 ) {
+    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\다운로드 (3).jpeg");
+    			//다이아
+    		}else if(score == 35) {
+    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\다운로드 (4).jpeg");
+    			//마스터
+    		}else if(score == 50) {
+    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\i14878380617.png");
+    			//이상혁씨
+    		}else {
+    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\다운로드 (1).jpeg");
+    			//브론즈
+    		}
+    		//일정 점수에 도달하면 새로운 이미지를 불러옴.
+    		screen = new ImageIcon("C:\\Users\\kseja\\Downloads\\goal-5399126_1280 (1).jpg");
+    		//배경화면 이미지 불러옴
+    	}
+    	public void paintComponent(Graphics g) {
+    		super.paintComponent(g);
+    		g.drawImage(icon.getImage(),  700, 0, 80,50, this);
+    		//티어이미지 위치 지정
+    		g.drawImage(screen.getImage(), 0, 0, getWidth()-92, getHeight(), this);
+    		//배경이미지 위치 지정
+    	}
+    }
+    
+    public void changeImage() {
+    	panel.loadImageIcon();
+    	panel.repaint();
+    	//이미지를 바꿀 수 있는 메소드 정의
+    }
+
     private void startGame() {
         getContentPane().removeAll(); // 버튼 제거
         
         Font font = new Font("맑은 고딕", Font.BOLD, 21);
-
+        
         // init score Label
         scoreLabel.setSize(100, 200);
         scoreLabel.setLocation(WIDTH - 100, HEIGHT - 150);
@@ -103,7 +149,7 @@ public class AimLabGame extends JFrame {
     private void updateGame() {
         targetCircle.shrink(); 
         //원의 크기를 줄이는 shrink()메서드 호출
-
+   
         if (targetCircle.getRadius() <= 0) {
             generateRandomCircle(); // 새로운 원 생성
             lives--;
@@ -116,6 +162,16 @@ public class AimLabGame extends JFrame {
                 //목숨이 0이 되면 gameOver 메소드를 호출
             }
         }
+        if(score == 15) {
+        	changeImage();
+        }else if(score == 25) {
+        	changeImage();
+        }else if(score == 35) {
+        	changeImage();
+        }else if(score == 50) {
+        	changeImage();
+        }
+        //일정 점수가 되면 이미지가 바뀌도록 정의
     }
 
     private void checkHit(int x, int y) {
@@ -135,16 +191,19 @@ public class AimLabGame extends JFrame {
         //다이얼로그 창을 통해 Game Over 메세지를 표시
         System.exit(0);
         //프로그램 종료
+        
     }
     //게임이 종료되었을 때 호출되는 메서드
 
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        targetCircle.draw(g);
         partition.draw(g);
+        if(targetCircle != null) {
+        	targetCircle.draw(g);
+        }
     }
-    //페인트 메소드를 오버리아드하여 화면을 그림
+    //페인트 메소드를 오버라이드하여 화면을 그림
 
     private void  generateRandomCircle() {
     	SwingWorker<Circle, Void> worker = new SwingWorker<Circle, Void>(){
@@ -196,7 +255,7 @@ public class AimLabGame extends JFrame {
         }
 
         public void draw(Graphics g) {
-            g.setColor(Color.BLUE);
+            g.setColor(Color.RED);
             g.fillOval(x - radius, y - radius, radius * 2, radius * 2);
         }
     }
