@@ -1,4 +1,4 @@
-package example1;
+//package example1;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,15 +17,15 @@ public class AimLabGame extends JFrame {
     private static final int BUTTON_HEIGHT = 30;
     private static final int CIRCLE_RADIUS = 30;
     //게임 화면 크기 및 버튼과 게임에서 사용될 원의 크기를 정의
-    
+
     private int lives = 3;
     private int score = 0;
     private Timer timer;
     private Random random = new Random();
     private Circle targetCircle;
     //목숨 수, 점수, 타이머, 난수 생성과 원 변수 선언
-    private JLabel scoreLabel = new JLabel(Integer.toString(score));
-    private JLabel livesLabel = new JLabel(Integer.toString(lives));
+    private JLabel scoreLabel = new JLabel("score: "+Integer.toString(score));
+    private JLabel livesLabel = new JLabel("life: "+Integer.toString(lives));
     private Partition partition = new Partition(WIDTH - 100, 0, WIDTH - 100, HEIGHT); // 세로선 좌표
     // 점수, 목숨을 출력할 JLabel 정의 및 게임화면 분할 Partition 직선 정의
 
@@ -35,8 +35,6 @@ public class AimLabGame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //게임 창의 제목 및 크기 지정과 창 종료 설정
         setLayout(null);
-        
-        
 
         //게임 시작 버튼 생성 
         JButton startButton = new JButton("Game Start");
@@ -59,16 +57,20 @@ public class AimLabGame extends JFrame {
     private void startGame() {
         getContentPane().removeAll(); // 버튼 제거
         
+        Font font = new Font("맑은 고딕", Font.BOLD, 21);
+
         // init score Label
         scoreLabel.setSize(100, 200);
-        scoreLabel.setLocation(WIDTH - 50, HEIGHT - 150);
+        scoreLabel.setLocation(WIDTH - 100, HEIGHT - 150);
+        scoreLabel.setFont(font);
         add(scoreLabel);
-        
+
         // init lives Label
         livesLabel.setSize(100, 200);
-        livesLabel.setLocation(WIDTH - 70, HEIGHT - 150);
+        livesLabel.setLocation(WIDTH - 100, HEIGHT - 170);
+        livesLabel.setFont(font);
         add(livesLabel);
-        
+
         // 게임 컴포넌트 초기화
         initGame();
 
@@ -105,7 +107,7 @@ public class AimLabGame extends JFrame {
         if (targetCircle.getRadius() <= 0) {
             generateRandomCircle(); // 새로운 원 생성
             lives--;
-            livesLabel.setText(Integer.toString(lives));
+            livesLabel.setText("life: "+Integer.toString(lives));
             // 클릭 실패시 목숨 1감소
 
             if (lives == 0) {
@@ -115,13 +117,13 @@ public class AimLabGame extends JFrame {
             }
         }
     }
-    
+
     private void checkHit(int x, int y) {
         if (targetCircle.contains(x, y)) {
             generateRandomCircle();
             //클릭이 원 안에서 이루어 졌는지 확인하고 새로운 원을 생성
             score += 1;
-            scoreLabel.setText(Integer.toString(score));
+            scoreLabel.setText("score: "+Integer.toString(score));
             // 클릭 성공시 점수 1증가
         }
     }
@@ -164,7 +166,7 @@ public class AimLabGame extends JFrame {
                 }
             }
     	};
-    	worker.execute();;
+    	worker.execute();
     }
     //화면 내에 랜덤한 위치에 원을 생성한다.
     //화면 넓이에서 원의 넓이 만큼 뺜 범위 내에서 랜덤한 값을 얻고 원의 반지름 만큼 이동해서 원이 생성되도록 설정한다.
@@ -198,26 +200,26 @@ public class AimLabGame extends JFrame {
             g.fillOval(x - radius, y - radius, radius * 2, radius * 2);
         }
     }
-    
+
     private class Partition {
        private int x1;
        private int y1;
        private int x2;
        private int y2;
-       
+
        public Partition(int x1, int y1, int x2, int y2) {
           this.x1 = x1;
           this.y1 = y1;
           this.x2 = x2;
           this.y2 = y2;
        }
-       
+
        public void draw(Graphics g) {
           g.setColor(Color.BLACK);
           g.drawLine(x1, y1, x2, y2);
        }
     }
-    
+
     public static void main(String[] args) {
     	SwingUtilities.invokeLater(() -> new AimLabGame().setVisible(true));
     }
