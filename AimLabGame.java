@@ -1,5 +1,3 @@
-//package example1;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -15,11 +13,14 @@ public class AimLabGame extends JFrame {
     private static final int HEIGHT = 600;
     private static final int BUTTON_WIDTH = 100;
     private static final int BUTTON_HEIGHT = 30;
-    private static final int CIRCLE_RADIUS = 30;
+    private static final double CIRCLE_RADIUS = 10;
+    private static final double MAX_RADIUS = 25;
     //게임 화면 크기 및 버튼과 게임에서 사용될 원의 크기를 정의
 
     private int lives = 3;
     private int score = 0;
+    private double level = 1;
+    private boolean increased = false;
     private Timer timer;
     private Random random = new Random();
     private Circle targetCircle;
@@ -66,23 +67,23 @@ public class AimLabGame extends JFrame {
     	}
     	public void loadImageIcon() {
     		if(score == 15) {
-    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\다운로드 (2).jpeg");
+    			icon = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures gold.jpg");
     			//골드
     		}else if(score == 25 ) {
-    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\다운로드 (3).jpeg");
+    			icon = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures diamond.jpg");
     			//다이아
     		}else if(score == 35) {
-    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\다운로드 (4).jpeg");
+    			icon = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures master.jpg");
     			//마스터
     		}else if(score == 50) {
-    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\i14878380617.png");
+    			icon = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures faker.jpg");
     			//이상혁씨
     		}else {
-    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\다운로드 (1).jpeg");
+    			icon = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures bronze.jpeg");
     			//브론즈
     		}
     		//일정 점수에 도달하면 새로운 이미지를 불러옴.
-    		screen = new ImageIcon("C:\\Users\\kseja\\Downloads\\goal-5399126_1280 (1).jpg");
+    		screen = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures bg.jpg");
     		//배경화면 이미지 불러옴
     	}
     	public void paintComponent(Graphics g) {
@@ -103,7 +104,7 @@ public class AimLabGame extends JFrame {
     private void startGame() {
         getContentPane().removeAll(); // 버튼 제거
         
-        Font font = new Font("맑은 고딕", Font.BOLD, 21);
+        Font font = new Font("맑은 고딕", Font.BOLD, 19);
         
         // init score Label
         scoreLabel.setSize(100, 200);
@@ -128,7 +129,7 @@ public class AimLabGame extends JFrame {
         });
 
         // 게임이 시작되면 타이머 생성
-        timer = new Timer(100, new ActionListener() {
+        timer = new Timer(50, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateGame();
@@ -147,13 +148,22 @@ public class AimLabGame extends JFrame {
     }
 
     private void updateGame() {
-        targetCircle.shrink(); 
-        //원의 크기를 줄이는 shrink()메서드 호출
+    	
+    	if (!targetCircle.getFlag()) {
+    		targetCircle.expand(level);
+    	} else {
+    		targetCircle.shrink(level);
+    	}
+    	
+    	if (targetCircle.getRadius() >= MAX_RADIUS) {
+    		targetCircle.setFlag();
+    	}
    
         if (targetCircle.getRadius() <= 0) {
             generateRandomCircle(); // 새로운 원 생성
             lives--;
             livesLabel.setText("life: "+Integer.toString(lives));
+            increased = false;
             // 클릭 실패시 목숨 1감소
 
             if (lives == 0) {
@@ -162,6 +172,12 @@ public class AimLabGame extends JFrame {
                 //목숨이 0이 되면 gameOver 메소드를 호출
             }
         }
+        
+        if(score > 0 && score%3==0 && !increased) {
+        	level += 0.1;
+        	increased = true;
+        }
+        
         if(score == 15) {
         	changeImage();
         }else if(score == 25) {
@@ -180,6 +196,7 @@ public class AimLabGame extends JFrame {
             //클릭이 원 안에서 이루어 졌는지 확인하고 새로운 원을 생성
             score += 1;
             scoreLabel.setText("score: "+Integer.toString(score));
+            increased = false;
             // 클릭 성공시 점수 1증가
         }
     }
@@ -209,8 +226,8 @@ public class AimLabGame extends JFrame {
     	SwingWorker<Circle, Void> worker = new SwingWorker<Circle, Void>(){
     		//Override
     		protected Circle doInBackground() {
-    			int x = random.nextInt(WIDTH - 100 - CIRCLE_RADIUS * 2) + CIRCLE_RADIUS;
-    	        int y = random.nextInt(HEIGHT - 30 - CIRCLE_RADIUS * 2) + CIRCLE_RADIUS + 30;
+    			int x = random.nextInt(WIDTH - 100 - (int)MAX_RADIUS * 2) + (int)MAX_RADIUS;
+    	        int y = random.nextInt(HEIGHT - 30 - (int)MAX_RADIUS * 2) + (int)MAX_RADIUS + 30;
     	        // circle 좌표 random 생성, 원이 화면 밖으로 나가지 않도록 범위 조정
     	        return new Circle(x, y, CIRCLE_RADIUS);
     		}
@@ -233,22 +250,36 @@ public class AimLabGame extends JFrame {
     private class Circle {
         private int x;
         private int y;
-        private int radius;
+        private double radius;
+        public boolean flag;
 
-        public Circle(int x, int y, int radius) {
+        public Circle(int x, int y, double radius) {
             this.x = x;
             this.y = y;
             this.radius = radius;
+            this.flag = false;
         }
 
-        public int getRadius() {
+        public double getRadius() {
             return radius;
         }
+        
+        public boolean getFlag() {
+        	return flag;
+        }
+        
+        public void setFlag() {
+        	flag = true;
+        }
 
-        public void shrink() {
-            radius -= 0.1; 
+        public void shrink(double x) {
+            radius -= x;
         }
         //원의 크기를 감소시키는 메소드
+        
+        public void expand(double x) {
+        	this.radius += x;
+        }
 
         public boolean contains(int px, int py) {
             return Math.sqrt((px - x) * (px - x) + (py - y) * (py - y)) <= radius;
@@ -256,7 +287,7 @@ public class AimLabGame extends JFrame {
 
         public void draw(Graphics g) {
             g.setColor(Color.RED);
-            g.fillOval(x - radius, y - radius, radius * 2, radius * 2);
+            g.fillOval(x - (int)radius, y - (int)radius, (int)radius * 2, (int)radius * 2);
         }
     }
 
