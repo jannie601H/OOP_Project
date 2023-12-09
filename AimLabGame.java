@@ -67,23 +67,23 @@ public class AimLabGame extends JFrame {
     	}
     	public void loadImageIcon() {
     		if(score == 15) {
-    			icon = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures gold.jpg");
+    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\다운로드 (2).jpeg");
     			//골드
     		}else if(score == 25 ) {
-    			icon = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures diamond.jpg");
+    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\다운로드 (3).jpeg");
     			//다이아
     		}else if(score == 35) {
-    			icon = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures master.jpg");
+    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\다운로드 (4).jpeg");
     			//마스터
     		}else if(score == 50) {
-    			icon = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures faker.jpg");
+    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\FeffWXtVIAAIDCA.jpeg");
     			//이상혁씨
     		}else {
-    			icon = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures bronze.jpeg");
+    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\다운로드 (1).jpeg");
     			//브론즈
     		}
     		//일정 점수에 도달하면 새로운 이미지를 불러옴.
-    		screen = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures bg.jpg");
+    		screen = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\goal-5399126_1280 (1).jpg");
     		//배경화면 이미지 불러옴
     	}
     	public void paintComponent(Graphics g) {
@@ -93,6 +93,14 @@ public class AimLabGame extends JFrame {
     		g.drawImage(screen.getImage(), 0, 0, getWidth()-92, getHeight(), this);
     		//배경이미지 위치 지정
     	}
+    	
+        public void resetImage() {
+        	icon = null;
+        	screen = null;
+        	loadImageIcon();
+        	repaint();
+        	//resetGame 시 이미지 초기화
+        }
     }
     
     public void changeImage() {
@@ -148,46 +156,43 @@ public class AimLabGame extends JFrame {
     }
 
     private void updateGame() {
-    	
-    	if (!targetCircle.getFlag()) {
-    		targetCircle.expand(level);
-    	} else {
-    		targetCircle.shrink(level);
-    	}
-    	
-    	if (targetCircle.getRadius() >= MAX_RADIUS) {
-    		targetCircle.setFlag();
-    	}
-   
-        if (targetCircle.getRadius() <= 0) {
-            generateRandomCircle(); // 새로운 원 생성
-            lives--;
-            livesLabel.setText("life: "+Integer.toString(lives));
-            increased = false;
-            // 클릭 실패시 목숨 1감소
-
-            if (lives == 0) {
-                gameOver();
-                //크기가 0이하가 되면 새로운 원을 생성하고 목숨을 감소
-                //목숨이 0이 되면 gameOver 메소드를 호출
+        if (targetCircle != null) {
+        	//targetCircle이 null이 아닌 경우에만 수행
+            if (!targetCircle.getFlag()) {
+                targetCircle.expand(level);
+            } else {
+                targetCircle.shrink(level);
             }
+
+            if (targetCircle.getRadius() >= MAX_RADIUS) {
+                targetCircle.setFlag();
+            }
+
+            if (targetCircle.getRadius() <= 0) {
+                generateRandomCircle();
+                // 새로운 원 생성
+                lives--;
+                livesLabel.setText("life: " + Integer.toString(lives));
+                increased = false;
+                // 클릭 실패시 목숨 1감소
+
+                if (lives == 0) {
+                    gameOver();
+                    // 크기가 0이하가 되면 새로운 원을 생성하고 목숨을 감소
+                    // 목숨이 0이 되면 gameOver 메소드를 호출
+                }
+            }
+
+            if (score > 0 && score % 3 == 0 && !increased) {
+                level += 0.1;
+                increased = true;
+            }
+
+            if (score == 15 || score == 25 || score == 35 || score == 50) {
+                changeImage();
+            }
+            // 일정 점수가 되면 이미지가 바뀌도록 정의
         }
-        
-        if(score > 0 && score%3==0 && !increased) {
-        	level += 0.1;
-        	increased = true;
-        }
-        
-        if(score == 15) {
-        	changeImage();
-        }else if(score == 25) {
-        	changeImage();
-        }else if(score == 35) {
-        	changeImage();
-        }else if(score == 50) {
-        	changeImage();
-        }
-        //일정 점수가 되면 이미지가 바뀌도록 정의
     }
 
     private void checkHit(int x, int y) {
@@ -206,12 +211,46 @@ public class AimLabGame extends JFrame {
         //타이머 정지 게임 루프를 중단시키기 위해 사용
         JOptionPane.showMessageDialog(this, "Game Over");
         //다이얼로그 창을 통해 Game Over 메세지를 표시
-        System.exit(0);
+        //System.exit(0);
         //프로그램 종료
-        
+        resetGame();
     }
     //게임이 종료되었을 때 호출되는 메서드
-
+    
+    private void resetGame() {
+    	panel.removeAll();
+    	setLayout(null);
+        //게임 시작 버튼 생성
+        JButton startButton = new JButton("Game Start");
+        startButton.setBounds((WIDTH - BUTTON_WIDTH) / 2, (HEIGHT - BUTTON_HEIGHT) / 2, BUTTON_WIDTH, BUTTON_HEIGHT);
+        //버튼의 위치를 중앙정렬
+        setContentPane(panel);
+         
+        startButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startGame();
+                //startGame 메서드를 호출하여 게임을 시작한다.
+            }
+        });
+        panel.add(startButton);
+        
+        lives = 3;
+        score = 0;
+        level = 1.0;
+        increased = false;
+        //초기로 돌아가도록 설정 초기화
+        
+        scoreLabel.setText("score: " + Integer.toString(score));
+        livesLabel.setText("life: " + Integer.toString(lives));
+        panel.resetImage();
+        //기록 초기화
+        
+        panel.repaint();
+    	
+    }
+    
+    
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -252,12 +291,14 @@ public class AimLabGame extends JFrame {
         private int y;
         private double radius;
         public boolean flag;
+        private ImageIcon circleImage;
 
         public Circle(int x, int y, double radius) {
             this.x = x;
             this.y = y;
             this.radius = radius;
             this.flag = false;
+            loadImageCircle();
         }
 
         public double getRadius() {
@@ -276,6 +317,9 @@ public class AimLabGame extends JFrame {
             radius -= x;
         }
         //원의 크기를 감소시키는 메소드
+        public void loadImageCircle() {
+        	circleImage = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\target-297290_1280.png");
+        }
         
         public void expand(double x) {
         	this.radius += x;
@@ -286,9 +330,13 @@ public class AimLabGame extends JFrame {
         }
 
         public void draw(Graphics g) {
-            g.setColor(Color.RED);
-            g.fillOval(x - (int)radius, y - (int)radius, (int)radius * 2, (int)radius * 2);
+            int xCoord = (int) (x - radius);
+            int yCoord = (int) (y - radius);
+            int diameter = (int) (radius * 2);
+            
+            g.drawImage(circleImage.getImage(), xCoord, yCoord, diameter, diameter, null);
         }
+
     }
 
     private class Partition {
