@@ -13,7 +13,10 @@ public class AimLabGame extends JFrame {
     private static final double CIRCLE_RADIUS = 10;
     private static final double MAX_RADIUS = 25;
     //게임 화면 크기 및 버튼과 게임에서 사용될 원의 크기를 정의
+    
+    Font font = new Font("맑은 고딕", Font.BOLD, 19);
 
+    private int highScore = 0;
     private int lives = 3;
     private int score = 0;
     private double level = 1;
@@ -24,11 +27,12 @@ public class AimLabGame extends JFrame {
     //목숨 수, 점수, 타이머, 난수 생성과 원 변수 선언
     private JLabel scoreLabel = new JLabel("score: "+Integer.toString(score));
     private JLabel livesLabel = new JLabel("life: "+Integer.toString(lives));
+    private JLabel highScoreLabel = new JLabel("high score: "+Integer.toString(highScore));
     private Partition partition = new Partition(WIDTH - 100, 0, WIDTH - 100, HEIGHT); // 세로선 좌표
     // 점수, 목숨을 출력할 JLabel 정의 및 게임화면 분할 Partition 직선 정의
     private MyPanel panel = new MyPanel();
-
-    // mouseListener
+    
+    // MouseListener
     MouseListener ml = new MouseAdapter() {
     	@Override
     	public void mousePressed(MouseEvent e) {
@@ -44,9 +48,15 @@ public class AimLabGame extends JFrame {
         setLayout(null);
         //게임 시작 버튼 생성
         JButton startButton = new JButton("Game Start");
-        startButton.setBounds((WIDTH - BUTTON_WIDTH) / 2, (HEIGHT - BUTTON_HEIGHT) / 2, BUTTON_WIDTH, BUTTON_HEIGHT);
+        startButton.setBounds((WIDTH - BUTTON_WIDTH) / 2 - 44, (HEIGHT - BUTTON_HEIGHT) / 2, BUTTON_WIDTH, BUTTON_HEIGHT);
         //버튼의 위치를 중앙정렬
         setContentPane(panel);
+        
+        highScoreLabel.setSize(300, 200);
+        highScoreLabel.setLocation(WIDTH/2 - 98, HEIGHT/5);
+        highScoreLabel.setFont(font);
+        add(highScoreLabel);
+        // high score 출력
         
         startButton.addActionListener(new ActionListener() {
             @Override
@@ -118,8 +128,6 @@ public class AimLabGame extends JFrame {
     private void startGame() {
         getContentPane().removeAll(); // 버튼 제거
         
-        Font font = new Font("맑은 고딕", Font.BOLD, 19);
-        
         // init score Label
         scoreLabel.setSize(100, 200);
         scoreLabel.setLocation(WIDTH - 100, HEIGHT - 150);
@@ -134,7 +142,7 @@ public class AimLabGame extends JFrame {
 
         // 게임 컴포넌트 초기화
         initGame();
-
+        
         // mouseListener 활성화
         addMouseListener(ml);
 
@@ -215,8 +223,7 @@ public class AimLabGame extends JFrame {
         // mouseListener 비활성화
         JOptionPane.showMessageDialog(this, "Game Over");
         //다이얼로그 창을 통해 Game Over 메세지를 표시
-        //System.exit(0);
-        //프로그램 종료
+        highScore = Math.max(highScore, score); //high score update
         resetGame();
     }
     //게임이 종료되었을 때 호출되는 메서드
@@ -226,9 +233,16 @@ public class AimLabGame extends JFrame {
     	setLayout(null);
         //게임 시작 버튼 생성
         JButton startButton = new JButton("Game Start");
-        startButton.setBounds((WIDTH - BUTTON_WIDTH) / 2, (HEIGHT - BUTTON_HEIGHT) / 2, BUTTON_WIDTH, BUTTON_HEIGHT);
+        startButton.setBounds((WIDTH - BUTTON_WIDTH) / 2 - 44, (HEIGHT - BUTTON_HEIGHT) / 2, BUTTON_WIDTH, BUTTON_HEIGHT);
         //버튼의 위치를 중앙정렬
         setContentPane(panel);
+        
+        highScoreLabel.setText("high score: "+Integer.toString(highScore));
+        highScoreLabel.setSize(300, 200);
+        highScoreLabel.setLocation(WIDTH/2 - 98, HEIGHT/5);
+        highScoreLabel.setFont(font);
+        add(highScoreLabel);
+        // high score 출력
          
         startButton.addActionListener(new ActionListener() {
             @Override
