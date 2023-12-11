@@ -1,9 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
@@ -30,6 +27,14 @@ public class AimLabGame extends JFrame {
     private Partition partition = new Partition(WIDTH - 100, 0, WIDTH - 100, HEIGHT); // 세로선 좌표
     // 점수, 목숨을 출력할 JLabel 정의 및 게임화면 분할 Partition 직선 정의
     private MyPanel panel = new MyPanel();
+
+    // mouseListener
+    MouseListener ml = new MouseAdapter() {
+    	@Override
+    	public void mousePressed(MouseEvent e) {
+    		checkHit(e.getX(), e.getY());
+    	}
+    };
     
     public AimLabGame() {
         setTitle("Aim Lab Game");
@@ -56,6 +61,7 @@ public class AimLabGame extends JFrame {
         add(startButton);
         //버튼 표시
     }
+   
 
     class MyPanel extends JPanel{
         private static final long serialVersionUID = 1L;
@@ -67,23 +73,23 @@ public class AimLabGame extends JFrame {
     	}
     	public void loadImageIcon() {
     		if(score == 15) {
-    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\다운로드 (2).jpeg");
+    			icon = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures\\gold.jpg");
     			//골드
     		}else if(score == 25 ) {
-    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\다운로드 (3).jpeg");
+    			icon = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures\\diamond.jpg");
     			//다이아
     		}else if(score == 35) {
-    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\다운로드 (4).jpeg");
+    			icon = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures\\master.jpg");
     			//마스터
     		}else if(score == 50) {
-    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\FeffWXtVIAAIDCA.jpeg");
+    			icon = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures\\faker.jpg");
     			//이상혁씨
     		}else {
-    			icon = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\다운로드 (1).jpeg");
+    			icon = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures\\bronze.jpg");
     			//브론즈
     		}
     		//일정 점수에 도달하면 새로운 이미지를 불러옴.
-    		screen = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\goal-5399126_1280 (1).jpg");
+    		screen = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures\\bg.jpg");
     		//배경화면 이미지 불러옴
     	}
     	public void paintComponent(Graphics g) {
@@ -129,12 +135,8 @@ public class AimLabGame extends JFrame {
         // 게임 컴포넌트 초기화
         initGame();
 
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                checkHit(e.getX(), e.getY());
-            }
-        });
+        // mouseListener 활성화
+        addMouseListener(ml);
 
         // 게임이 시작되면 타이머 생성
         timer = new Timer(50, new ActionListener() {
@@ -147,7 +149,7 @@ public class AimLabGame extends JFrame {
             }
         });
 
-        timer.start();
+        timer.restart();
         generateRandomCircle();
     }
 
@@ -209,6 +211,8 @@ public class AimLabGame extends JFrame {
     private void gameOver() {
         timer.stop();
         //타이머 정지 게임 루프를 중단시키기 위해 사용
+        removeMouseListener(ml);
+        // mouseListener 비활성화
         JOptionPane.showMessageDialog(this, "Game Over");
         //다이얼로그 창을 통해 Game Over 메세지를 표시
         //System.exit(0);
@@ -318,7 +322,7 @@ public class AimLabGame extends JFrame {
         }
         //원의 크기를 감소시키는 메소드
         public void loadImageCircle() {
-        	circleImage = new ImageIcon("C:\\Users\\kseja\\OneDrive\\바탕 화면\\과제\\자바 프로젝트\\target-297290_1280.png");
+        	circleImage = new ImageIcon("C:\\Users\\qkqcu\\Pictures\\Saved Pictures\\target.png");
         }
         
         public void expand(double x) {
@@ -336,6 +340,7 @@ public class AimLabGame extends JFrame {
             
             g.drawImage(circleImage.getImage(), xCoord, yCoord, diameter, diameter, null);
         }
+      //drawImage()는 int형을 사용하여야 하므로 double형을 int형으로 변환
 
     }
 
